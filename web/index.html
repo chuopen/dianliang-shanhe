@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>点亮山河 · 国风中国地理科普</title>
+<link rel="stylesheet" href="css/style.css?v=7">
+</head>
+<body>
+
+<!-- ═══════════ 序幕 ═══════════ -->
+<div id="intro" class="view intro-view">
+  <div class="intro-scroll">
+    <div class="mountains">
+      <svg viewBox="0 0 1200 320" preserveAspectRatio="xMidYMax slice">
+        <path d="M0,320 L0,230 Q90,130 180,200 T360,175 T540,225 T720,150 T900,205 T1080,160 T1200,215 L1200,320 Z" fill="rgba(200,164,92,0.07)"/>
+        <path d="M0,320 L0,258 Q150,185 300,242 T600,222 T900,252 T1200,238 L1200,320 Z" fill="rgba(200,164,92,0.11)"/>
+        <path d="M0,320 L0,282 Q220,240 440,272 T880,262 T1200,276 L1200,320 Z" fill="rgba(10,9,7,0.85)"/>
+      </svg>
+    </div>
+    <div class="intro-text">
+      <h1 class="title-seal">点亮山河</h1>
+      <div class="intro-rule"></div>
+      <p class="intro-line">九百六十万平方公里<br>你点亮过几寸？</p>
+    </div>
+    <button id="intro-skip" class="btn-ghost">跳过 · 入卷</button>
+</div>
+</div>
+
+<!-- ═══════════ 顶栏 ═══════════ -->
+<header id="topbar" class="topbar hidden">
+  <div class="topbar-left">
+    <span class="logo-seal">山河</span>
+    <span class="logo-name">点亮山河</span>
+    <span id="crumb" class="crumb"></span>
+  </div>
+  <div class="topbar-right">
+    <div class="theme-switch" id="theme-switch" title="更换画卷皮肤">
+      <button class="swatch" data-theme="mo" style="--sw:#c8a45c" title="墨渊鎏金">墨</button>
+      <button class="swatch" data-theme="ty" style="--sw:#7cb342" title="桃源手账">桃</button>
+      <button class="swatch" data-theme="xj" style="--sw:#5fa8cc" title="仙剑云海">侠</button>
+      <button class="swatch" data-theme="qd" style="--sw:#2fa3c4" title="碧海群岛">岛</button>
+    </div>
+    <label class="exam-toggle" title="打开后：奇遇显示考点角标、题库混入真题风格">
+      <input type="checkbox" id="exam-mode">
+      <span>考点模式</span>
+    </label>
+    <button id="btn-hall" class="btn-mini">成就殿堂</button>
+    <button id="btn-reset" class="btn-mini btn-mini-ghost" title="清除本地进度">重置</button>
+  </div>
+</header>
+
+<!-- ═══════════ 全景地图 ═══════════ -->
+<div id="map-view" class="view map-view hidden">
+  <div class="map-canvas-wrap">
+    <svg id="china-map" class="china-map" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
+  <aside id="map-tooltip" class="map-tooltip hidden"></aside>
+  <footer class="map-statusbar">
+    <span id="progress-line">点亮进度：省 0/34 · 市 0/15 · 县 0/9</span>
+    <span id="today-line"></span>
+  </footer>
+  <div id="home-hint" class="home-hint hidden">👆 点击你的家乡，看看你对家乡了解多少</div>
+  <div id="tutorial-tip" class="tutorial-tip hidden">
+    📜 初来乍到：① 点亮画卷中的微光奇遇 → ② 完成奇遇小测 → ③ 去闯关牌坊答题，点亮这座城
+    <button id="tutorial-close" class="tip-close">收起</button>
+  </div>
+</div>
+
+<!-- ═══════════ 地区画卷 ═══════════ -->
+<div id="scroll-view" class="view scroll-view hidden">
+  <div class="scroll-header">
+    <button id="btn-back" class="btn-ghost btn-back">‹ 返回地图</button>
+    <h2 id="scroll-title" class="scroll-title">山东</h2>
+    <div class="scroll-progress-wrap">
+      <div class="progress-outer"><div id="knowledge-bar" class="progress-inner"></div>
+        <div class="progress-ticks"><i style="left:40%"></i><i style="left:70%"></i><i style="left:90%"></i></div>
+      </div>
+      <span id="knowledge-num" class="progress-num">0%</span>
+      <span id="tier-badge" class="tier-badge tier-0">水墨留白</span>
+    </div>
+  </div>
+  <div class="scroll-canvas" id="scroll-canvas">
+    <!-- 山水背景由 JS 注入 -->
+    <div id="encounter-field" class="encounter-field"></div>
+    <div id="drill-panel" class="drill-panel hidden"></div>
+  </div>
+</div>
+
+<!-- ═══════════ 奇遇卡 ═══════════ -->
+<aside id="encounter-card" class="encounter-card corner-frame hidden">
+  <button class="card-close" id="card-close">✕</button>
+  <div class="card-head">
+    <span id="card-rarity" class="rarity-tag"></span>
+    <span id="card-credibility" class="credibility-tag"></span>
+    <span id="card-type" class="type-tag"></span>
+  </div>
+  <h3 id="card-title" class="card-title"></h3>
+  <p id="card-place" class="card-place"></p>
+  <div id="card-exam" class="card-exam hidden">📖 考点</div>
+  <div id="card-hook" class="card-hook hidden"></div>
+  <div id="card-frags" class="card-frags hidden"></div>
+  <p id="card-content" class="card-content hidden"></p>
+  <button id="card-expand" class="btn-expand hidden">展开细读全文</button>
+  <blockquote id="card-quote" class="card-quote hidden"></blockquote>
+  <p id="card-sources" class="card-sources"></p>
+  <div id="card-quiz" class="card-quiz"></div>
+  <div class="card-ask">
+    <div class="ask-title">✦ 问遍山河</div>
+    <div class="ask-row">
+      <input id="ask-input" type="text" placeholder="还想深挖？例如：这里还出过哪些名人？">
+      <button id="ask-btn" class="btn-mini">追问</button>
+    </div>
+    <div id="ask-answer" class="ask-answer hidden"></div>
+  </div>
+</aside>
+
+<!-- ═══════════ 闯关答题 ═══════════ -->
+<div id="quiz-view" class="view quiz-view hidden">
+  <div class="quiz-box corner-frame">
+    <div class="quiz-head">
+      <h2 id="quiz-name" class="quiz-name"></h2>
+      <span id="quiz-step" class="quiz-step"></span>
+    </div>
+    <div id="quiz-body" class="quiz-body"></div>
+  </div>
+</div>
+
+<!-- ═══════════ 成就殿堂 ═══════════ -->
+<div id="hall-view" class="view hall-view hidden">
+  <button id="hall-close" class="btn-ghost hall-close">‹ 返回</button>
+  <h2 class="hall-title">成就殿堂</h2>
+  <div class="hall-title-sub">— 行走山河 · 皆成勋章 —</div>
+  <div class="hall-tabs">
+    <button class="hall-tab active" data-tab="badges">地区冰箱贴</button>
+    <button class="hall-tab" data-tab="cards">奇遇卡牌</button>
+  </div>
+  <div id="hall-body" class="hall-body"></div>
+</div>
+
+<!-- 点亮动画层 -->
+<div id="lightup-overlay" class="lightup-overlay hidden">
+  <div class="lightup-box corner-frame">
+    <div id="lightup-tier" class="lightup-tier"></div>
+    <div id="lightup-region" class="lightup-region"></div>
+    <div id="lightup-badge" class="lightup-badge"></div>
+    <button id="lightup-ok" class="btn-solid">收下</button>
+  </div>
+</div>
+
+<!-- 通用 toast -->
+<div id="toast" class="toast hidden"></div>
+
+<!-- 页脚审图号（占位） -->
+<div class="map-footer-note">底图：自然资源部标准地图服务（上线前申请正式审图号） · 原型版</div>
+
+<script src="js/app.js?v=8"></script>
+</body>
+</html>
